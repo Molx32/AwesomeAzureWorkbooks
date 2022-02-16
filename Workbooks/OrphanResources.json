@@ -1,0 +1,297 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## Orphan resources\r\nUse this report to analyze orphan resources within your environment. \r\n<br/>\r\n<br/>"
+      },
+      "name": "text - 0"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "1ca69445-60fc-4806-b43d-ac7e6aad630a",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "summarize by subscriptionId\r\n| project value = strcat(\"/subscriptions/\", subscriptionId), label = subscriptionId\r\n",
+            "crossComponentResources": [
+              "value::selected"
+            ],
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.resourcegraph/resources"
+      },
+      "name": "parameters - 1"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "a8e35dee-0aeb-446f-ab28-f37fbb939b75",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Overview",
+            "subTarget": "Overview",
+            "style": "link"
+          },
+          {
+            "id": "6abb8587-b579-4da0-b6c1-21dcddf76920",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Disks",
+            "subTarget": "Disks",
+            "style": "link"
+          },
+          {
+            "id": "a4424e52-7557-4045-a312-cff9f5904642",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "NSGs",
+            "subTarget": "NSGs",
+            "style": "link"
+          },
+          {
+            "id": "e01c5518-f15e-4f63-a7fb-7f2881773c41",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "NICs",
+            "subTarget": "NICs",
+            "style": "link"
+          },
+          {
+            "id": "c90c7e6b-934f-46aa-8046-3d032c31bf44",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "IPs",
+            "subTarget": "IPs",
+            "style": "link"
+          },
+          {
+            "id": "39fde745-6ab5-45e0-884c-08d8ae0108a0",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Resource groups",
+            "subTarget": "ResourceGroups",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "Navigation links",
+      "styleSettings": {
+        "margin": "10px 0 0 0"
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": []
+      },
+      "name": "OverviewGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| where type has \"microsoft.compute/disks\"\r\n| extend diskState = tostring(properties.diskState)\r\n| where managedBy == \"\"\r\nor diskState == 'Unattached'\r\n| project id, diskState, resourceGroup, location, subscriptionId",
+              "size": 0,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "Disks"
+      },
+      "name": "DisksGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| where type =~ 'microsoft.network/networksecuritygroups' and isnull(properties.networkInterfaces) and isnull(properties.subnets)\r\n| project Resource=id, resourceGroup, subscriptionId, location, tags.maintainer, tags.environment\r\n| count",
+              "size": 4,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ],
+              "visualization": "card",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "textSettings": {
+                "style": "bignumber"
+              }
+            },
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| where type =~ 'microsoft.network/networksecuritygroups' and isnull(properties.networkInterfaces) and isnull(properties.subnets)\r\n| project Resource=id, resourceGroup, subscriptionId, location, tags.maintainer, tags.environment",
+              "size": 0,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "NSGs"
+      },
+      "name": "NSGsGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 1,
+            "content": {
+              "json": "### NIC not attached to VM and not associated to private endpoint"
+            },
+            "name": "text - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| where type == \"microsoft.network/networkinterfaces\"\r\n| where isnull(properties.privateEndpoint) and isnull(properties.virtualMachine)\r\n| project id, resourceGroup, location, subscriptionId",
+              "size": 0,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "NICs"
+      },
+      "name": "NICsGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "resources\r\n| where type == \"microsoft.network/publicipaddresses\"\r\n| where isnull(properties.ipConfiguration)\r\n\tand isnull(properties.natGateway)\r\n\tand isnull(properties.dnsSettings)\r\n\tand isnull(properties.linkedPublicIpAddress)\r\n\tand isnull(properties.publicIpPrefix)\r\n\tand isnull(properties.servicePublicIPAddress)\r\n\tand isnull(properties.scaleSetLoadBalancerFrontendIPConfigs)\r\n| project Resource = id, IP = properties.ipAddress",
+              "size": 0,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "IPs"
+      },
+      "name": "IPsGroup"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": " ResourceContainers\r\n | where type == \"microsoft.resources/subscriptions/resourcegroups\"\r\n | extend rgAndSub = strcat(resourceGroup, \"--\", subscriptionId)\r\n | join kind=leftouter (\r\n     Resources\r\n     | extend rgAndSub = strcat(resourceGroup, \"--\", subscriptionId)\r\n     | summarize count() by rgAndSub\r\n ) on rgAndSub\r\n | where isnull(count_)\r\n | project Resource = id, Name = name, Subsciption = subscriptionId, Tags = tags",
+              "size": 0,
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscription}"
+              ]
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "ResourceGroups"
+      },
+      "name": "ResourceGroupsGroup"
+    }
+  ],
+  "fallbackResourceIds": [
+    "azure monitor"
+  ],
+  "fromTemplateId": "community-Workbooks/Azure Monitor - Agents/Overview",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
