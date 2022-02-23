@@ -1,0 +1,232 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "95a5c172-fe17-4ad8-8ebe-20fb34df7874",
+            "cellValue": "tab",
+            "linkTarget": "parameter",
+            "linkLabel": "Overview",
+            "subTarget": "overview",
+            "style": "link"
+          },
+          {
+            "id": "f73e6055-0da9-4ce9-b43c-11028d5f6610",
+            "cellValue": "tab",
+            "linkTarget": "parameter",
+            "linkLabel": "New resources",
+            "subTarget": "newResources",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 0"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": []
+      },
+      "conditionalVisibility": {
+        "parameterName": "tab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "name": "Overview"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 9,
+            "content": {
+              "version": "KqlParameterItem/1.0",
+              "crossComponentResources": [
+                "{Subscriptions}"
+              ],
+              "parameters": [
+                {
+                  "id": "58afed77-c8eb-467c-b1b4-1cda0730733e",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Subscriptions",
+                  "type": 6,
+                  "isRequired": true,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "value": [
+                    "value::all"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "includeAll": true,
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  }
+                },
+                {
+                  "id": "f6a723b3-07c3-4ab8-b75a-8385381d585c",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "Resourcetype",
+                  "label": "Resource type",
+                  "type": 7,
+                  "isRequired": true,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "resources\r\n| distinct type",
+                  "crossComponentResources": [
+                    "{Subscriptions}"
+                  ],
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "showDefault": false
+                  },
+                  "timeContext": {
+                    "durationMs": 86400000
+                  },
+                  "defaultValue": "value::all",
+                  "queryType": 1,
+                  "resourceType": "microsoft.resourcegraph/resources"
+                }
+              ],
+              "style": "pills",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources"
+            },
+            "name": "parameters - 3"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## Activity logs\r\nThis sections leverages activity logs to provide resource deletion and creation/update information."
+            },
+            "name": "text - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AzureActivity",
+              "size": 0,
+              "title": "Newly created resources by subscription",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": []
+            },
+            "name": "query - 4"
+          },
+          {
+            "type": 1,
+            "content": {
+              "json": "## Resource properties\r\nThis section leverages resource properties and tags to monitor their creation date."
+            },
+            "name": "text - 6"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| extend res = iff(isnotnull(d),\"Resources with creation date\", \"Resources without creation date\")\r\n| project res\r\n| summarize count() by res\r\n\r\n",
+              "size": 4,
+              "title": "Resource with no creation date",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscriptions}"
+              ],
+              "visualization": "tiles",
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "res",
+                  "formatter": 1
+                },
+                "subtitleContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "blue"
+                  }
+                },
+                "showBorder": false,
+                "size": "full"
+              },
+              "textSettings": {
+                "style": "bignumber"
+              }
+            },
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| where isnotnull(d)\r\n| extend slot = bin(d,1d)\r\n| summarize count() by slot",
+              "size": 0,
+              "title": "Resource creation by date",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscriptions}"
+              ],
+              "visualization": "timechart",
+              "chartSettings": {
+                "xAxis": "slot",
+                "yAxis": [
+                  "count_"
+                ],
+                "group": null,
+                "createOtherGroup": 0
+              }
+            },
+            "name": "Resource creation by date"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| where isnotnull(d)\r\n| sort by d desc\r\n| project [\"Creation date\"]=d, Resource=id, Type=type, Subscription=subscriptionId, [\"Resource group\"]=resourceGroup\r\n| limit 100\r\n",
+              "size": 0,
+              "title": "Last 100 created resources",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscriptions}"
+              ]
+            },
+            "name": "query - 2"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "tab",
+        "comparison": "isEqualTo",
+        "value": "newResources"
+      },
+      "name": "New resources"
+    }
+  ],
+  "fallbackResourceIds": [
+    "Azure Monitor"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
