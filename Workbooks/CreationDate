@@ -64,9 +64,7 @@
                   "multiSelect": true,
                   "quote": "'",
                   "delimiter": ",",
-                  "value": [
-                    "value::all"
-                  ],
+                  "value": [],
                   "typeSettings": {
                     "additionalResourceOptions": [
                       "value::all"
@@ -120,22 +118,6 @@
             "name": "text - 5"
           },
           {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "AzureActivity",
-              "size": 0,
-              "title": "Newly created resources by subscription",
-              "timeContext": {
-                "durationMs": 2592000000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "crossComponentResources": []
-            },
-            "name": "query - 4"
-          },
-          {
             "type": 1,
             "content": {
               "json": "## Resource properties\r\nThis section leverages resource properties and tags to monitor their creation date."
@@ -146,7 +128,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| extend res = iff(isnotnull(d),\"Resources with creation date\", \"Resources without creation date\")\r\n| project res\r\n| summarize count() by res\r\n\r\n",
+              "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| extend res = iff(isnotnull(d),\"Resources with creation date\", \"Resources without creation date\")\r\n| project res\r\n| summarize count() by res",
               "size": 4,
               "title": "Resource with no creation date",
               "queryType": 1,
@@ -164,17 +146,63 @@
                   "columnMatch": "count_",
                   "formatter": 12,
                   "formatOptions": {
-                    "palette": "blue"
+                    "palette": "categorical"
                   }
                 },
-                "showBorder": false,
-                "size": "full"
+                "showBorder": true,
+                "size": "auto"
               },
               "textSettings": {
                 "style": "bignumber"
               }
             },
+            "customWidth": "50",
             "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "Resources\r\n| extend res = iff(isnotnull(tags.creationDate),\"Tagged resources\", \"Not tagged resources\")\r\n| summarize count() by res",
+              "size": 4,
+              "title": "Creation date tag",
+              "queryType": 1,
+              "resourceType": "microsoft.resourcegraph/resources",
+              "crossComponentResources": [
+                "{Subscriptions}"
+              ],
+              "visualization": "tiles",
+              "gridSettings": {
+                "sortBy": [
+                  {
+                    "itemKey": "Count",
+                    "sortOrder": 1
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Count",
+                  "sortOrder": 1
+                }
+              ],
+              "tileSettings": {
+                "titleContent": {
+                  "columnMatch": "res"
+                },
+                "subtitleContent": {
+                  "columnMatch": "count_",
+                  "formatter": 12,
+                  "formatOptions": {
+                    "palette": "categorical"
+                  }
+                },
+                "showBorder": true,
+                "size": "auto"
+              }
+            },
+            "customWidth": "50",
+            "name": "query - 8"
           },
           {
             "type": 3,
@@ -204,6 +232,22 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
+              "query": "AzureActivity\r\n| where TimeGenerated < now()\r\n| where strcat('/subscriptions/', SubscriptionId) in~ ({Subscriptions})\r\n| where CategoryValue == \"Administrative\"\r\n| where OperationNameValue contains(\"delete\")\r\n| where ActivityStatusValue == \"Success\"\r\n| summarize arg_max(TimeGenerated, _ResourceId) by _ResourceId, ResourceGroup, SubscriptionId, Caller\r\n| project TimeGenerated, _ResourceId, ResourceGroup, SubscriptionId, Caller\r\n| summarize dcount(_ResourceId) by bin(TimeGenerated,1d)\r\n| sort by TimeGenerated asc",
+              "size": 0,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [],
+              "visualization": "timechart",
+              "tileSettings": {
+                "showBorder": false
+              }
+            },
+            "name": "query - 7"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
               "query": "Resources\r\n| extend d1 = properties.createdTime\r\n| extend d2 = properties.createdDate\r\n| extend d3 = properties.creationTime\r\n| extend d4 = properties.timeCreated\r\n| extend d5 = properties.creationDate\r\n| extend d6 = properties.metadata.createdDateTimeUtc\r\n| extend d7 = properties.settings.timestamp\r\n| extend d8 = properties.issueDate\r\n| extend d9 = properties.CreationDate\r\n| extend d10 = properties.createTime\r\n| extend d11 = properties.createdAt\r\n| extend d12 = properties.created\r\n| extend d13 = tags.creationDate\r\n| extend d=todatetime(strcat(d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13))\r\n| where isnotnull(d)\r\n| sort by d desc\r\n| project [\"Creation date\"]=d, Resource=id, Type=type, Subscription=subscriptionId, [\"Resource group\"]=resourceGroup\r\n| limit 100\r\n",
               "size": 0,
               "title": "Last 100 created resources",
@@ -214,6 +258,22 @@
               ]
             },
             "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AzureActivity\r\n| where CategoryValue == \"Administrative\"\r\n| where strcat('/subscriptions/',SubscriptionId) in~ ({Subscriptions})\r\n| where OperationNameValue contains(\"delete\")\r\n| where ActivityStatusValue == \"Success\"\r\n| summarize arg_max(TimeGenerated, _ResourceId) by _ResourceId, ResourceGroup, SubscriptionId, Caller\r\n| project TimeGenerated, _ResourceId, ResourceGroup, SubscriptionId, Caller\r\n| sort by TimeGenerated desc\r\n| limit 100",
+              "size": 0,
+              "title": "Last 100 deleted resources",
+              "timeContext": {
+                "durationMs": 2592000000
+              },
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": []
+            },
+            "name": "query - 4"
           }
         ]
       },
