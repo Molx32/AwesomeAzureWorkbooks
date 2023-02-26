@@ -41,8 +41,7 @@
             "quote": "'",
             "delimiter": ",",
             "query": "where type =~ 'microsoft.operationalinsights/workspaces'\r\n| where tolower(tostring(tags.application)) == \"update management\"\r\n| distinct tostring(tags.environment)",
-            "crossComponentResources": [],
-            "value": [
+            "crossComponentResources": [
               "value::all"
             ],
             "typeSettings": {
@@ -55,7 +54,10 @@
               "durationMs": 86400000
             },
             "queryType": 1,
-            "resourceType": "microsoft.resourcegraph/resources"
+            "resourceType": "microsoft.resourcegraph/resources",
+            "value": [
+              "value::all"
+            ]
           },
           {
             "id": "ab22b036-41d3-4ec5-89c5-108ae5fac878",
@@ -135,14 +137,6 @@
             "linkTarget": "parameter",
             "linkLabel": "Jobs - Update",
             "subTarget": "Jobs",
-            "style": "link"
-          },
-          {
-            "id": "e6482255-b7dd-4c22-871d-ccf915a5e16c",
-            "cellValue": "tab",
-            "linkTarget": "parameter",
-            "linkLabel": "Service health",
-            "subTarget": "ServiceHealth",
             "style": "link"
           }
         ]
@@ -294,105 +288,6 @@
               }
             },
             "name": "query - 2"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| where tostring(tags.patch) matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where tostring(tags.maintainer) == \"cms\"\r\n| extend env = tostring(split(tostring(tags.patch),\"-\")[0])\r\n| extend day = tostring(split(tostring(tags.patch),\"-\")[1])\r\n| extend hour = tostring(split(tostring(tags.patch),\"-\")[2])\r\n| extend patch = tostring(tags.patch)\r\n| project patch, env, day, hour\r\n| summarize count() by day",
-              "size": 2,
-              "title": "Distribution of patches by day",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "visualization": "piechart",
-              "chartSettings": {
-                "createOtherGroup": 7,
-                "ySettings": {
-                  "numberFormatSettings": {
-                    "unit": 0,
-                    "options": {
-                      "style": "decimal",
-                      "useGrouping": true
-                    }
-                  }
-                }
-              }
-            },
-            "customWidth": "50",
-            "name": "query - 10"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| where tostring(tags.patch) matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where tostring(tags.maintainer) == \"cms\"\r\n| extend env = tostring(split(tostring(tags.patch),\"-\")[0])\r\n| extend day = tostring(split(tostring(tags.patch),\"-\")[1])\r\n| extend hour = tostring(split(tostring(tags.patch),\"-\")[2])\r\n| extend patch = tostring(tags.patch)\r\n| project patch, env, day, hour\r\n| summarize count() by hour",
-              "size": 2,
-              "title": "Distribution of patches by hour",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "visualization": "piechart",
-              "chartSettings": {
-                "seriesLabelSettings": [
-                  {
-                    "seriesName": "group 1",
-                    "color": "blue"
-                  },
-                  {
-                    "seriesName": "group 2",
-                    "color": "blueDark"
-                  },
-                  {
-                    "seriesName": "group 4",
-                    "color": "turquoise"
-                  },
-                  {
-                    "seriesName": "group 3",
-                    "color": "grayBlue"
-                  }
-                ]
-              }
-            },
-            "customWidth": "50",
-            "name": "query - 6"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| where tostring(tags.patch) matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where tostring(tags.maintainer) == \"cms\"\r\n| summarize count() by tostring(tags.patch)",
-              "size": 0,
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "visualization": "barchart",
-              "graphSettings": {
-                "type": 0,
-                "topContent": {
-                  "columnMatch": "tags_patch",
-                  "formatter": 1
-                },
-                "centerContent": {
-                  "columnMatch": "count_",
-                  "formatter": 1,
-                  "numberFormat": {
-                    "unit": 17,
-                    "options": {
-                      "maximumSignificantDigits": 3,
-                      "maximumFractionDigits": 2
-                    }
-                  }
-                }
-              }
-            },
-            "name": "query - 7"
           }
         ]
       },
@@ -599,7 +494,7 @@
                   "timeContext": {
                     "durationMs": 86400000
                   },
-                  "value": "omi"
+                  "value": "lib"
                 }
               ],
               "style": "pills",
@@ -658,7 +553,7 @@
                   "name": "Name",
                   "type": 1,
                   "description": "Search for a machine in the list",
-                  "value": "",
+                  "value": "pam",
                   "timeContext": {
                     "durationMs": 86400000
                   },
@@ -687,7 +582,7 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "compliance_param",
                   "type": 1,
-                  "value": "4"
+                  "value": ""
                 }
               ],
               "style": "pills",
@@ -1078,47 +973,6 @@
             },
             "customWidth": "50",
             "name": "query - 7"
-          },
-          {
-            "type": 1,
-            "content": {
-              "json": "# Manual jobs"
-            },
-            "name": "text - 3"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "UpdateRunProgress\r\n| summarize arg_max(TimeGenerated, InstallationStatus, Computer, UpdateRunName) by SourceComputerId, Product\r\n| summarize RollupStatus=max(case(InstallationStatus contains \"Download Failed\", 4, InstallationStatus contains \"Install Failed\" or InstallationStatus=~\"Failed\", 5, InstallationStatus contains \"Succeeded\", 0, InstallationStatus=~\"NotIncluded\" or InstallationStatus=~\"Excluded\", 1, 2)) by Computer, Product, UpdateRunName\r\n| summarize Count=count() by Computer, RollupStatus, UpdateRunName\r\n| summarize TotalCount=sum(Count), DownloadFailedCount=sumif(Count, RollupStatus==4), InstallFailedCount=sumif(Count, RollupStatus==5), SucceededCount=sumif(Count, RollupStatus==0), NotAttemptedCount=sumif(Count, RollupStatus==2), NotSelectedCount=sumif(Count, RollupStatus==1) by Computer, UpdateRunName\r\n| project Computer, SucceededCount, NotAttemptedCount, NotSelectedCount, InstallFailedCount, DownloadFailedCount, TotalCount, UpdateRunName\r\n| where Computer has \"{Name}\"\r\n| where UpdateRunName contains \"MANUAL\"\r\n| order by SucceededCount desc",
-              "size": 0,
-              "timeContext": {
-                "durationMs": 86400000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "crossComponentResources": [
-                "{Workspaces}"
-              ]
-            },
-            "name": "query - 4"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "UpdateRunProgress\r\n| extend startDate = format_datetime(TimeGenerated, \"dd-MM-yyyy\")\r\n| where UpdateRunName contains \"MANUAL\"\r\n| where Computer contains \"yod\"\r\n| summarize arg_max(TimeGenerated, startDate, InstallationStatus, Computer, UpdateRunName) by SourceComputerId, Product",
-              "size": 0,
-              "timeContext": {
-                "durationMs": 86400000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "crossComponentResources": [
-                "{Workspaces}"
-              ]
-            },
-            "name": "query - 5"
           }
         ]
       },
@@ -1128,252 +982,6 @@
         "value": "Jobs"
       },
       "name": "group - 5"
-    },
-    {
-      "type": 12,
-      "content": {
-        "version": "NotebookGroup/1.0",
-        "groupType": "editable",
-        "items": [
-          {
-            "type": 1,
-            "content": {
-              "json": "# Coverage\r\nIn order for VMs to be onboarded on update management, they need to comply with the following :\r\n- Report to a Log Analytics workspace\r\n- Have the following tags :\r\n\t- **patch** *e.g.* **P-MON-03:00**\r\n\t- **maintainer** must be equal to **cms**\r\nThe following charts help evaluate this coverage."
-            },
-            "name": "text - 4"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| where tostring(tags.patch) matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where tostring(tags.maintainer) == \"cms\"\r\n| extend e = \"Valid tags\"\r\n| union (\r\n    resources\r\n    | where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n    | where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n    | extend patch = tostring(tags.patch)\r\n    | where patch !has \"group\"\r\n    | where patch !startswith \"P-\" and patch !startswith \"Q-\" and patch !startswith \"R-\"\r\n    | where patch !endswith \"03:00\" and patch !endswith \"12:00\" and patch !endswith \"22:00\"\r\n    | where patch !has \"MON\" and patch !has \"TUE\" and patch !has \"WED\" and patch !has \"THU\" and patch !has \"FRI\" and patch !has \"SAT\" and patch !has \"SUN\"\r\n    | extend e = \"Invalid tags\"\r\n)\r\n| summarize count() by e",
-              "size": 2,
-              "title": "Machines with good/wrong tags",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "visualization": "piechart",
-              "tileSettings": {
-                "showBorder": false
-              },
-              "chartSettings": {
-                "seriesLabelSettings": [
-                  {
-                    "seriesName": "Invalid tags",
-                    "color": "red"
-                  },
-                  {
-                    "seriesName": "Valid tags",
-                    "color": "green"
-                  }
-                ]
-              },
-              "textSettings": {
-                "style": "bignumber"
-              }
-            },
-            "customWidth": "33",
-            "name": "query - 0"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "Heartbeat\r\n| distinct _ResourceId, ComputerEnvironment\r\n| summarize count() by ComputerEnvironment",
-              "size": 2,
-              "title": "Machines connected to Log Analytics workspaces by type",
-              "timeContext": {
-                "durationMs": 86400000
-              },
-              "exportedParameters": [
-                {
-                  "parameterName": "allvms",
-                  "parameterType": 5
-                }
-              ],
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "crossComponentResources": [
-                "{Workspaces}"
-              ],
-              "visualization": "piechart",
-              "chartSettings": {
-                "seriesLabelSettings": [
-                  {
-                    "seriesName": "Onboarded for monitoring",
-                    "color": "green"
-                  }
-                ]
-              }
-            },
-            "customWidth": "33",
-            "name": "query - 5"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "Heartbeat\r\n| where TimeGenerated>ago(12h) and OSType==\"Linux\" and notempty(Computer)\r\n| summarize arg_max(TimeGenerated, Solutions, Computer, ResourceId, ComputerEnvironment, VMUUID) by SourceComputerId\r\n| where Solutions has \"updates\"\r\n| extend vmuuId=VMUUID, azureResourceId=ResourceId, osType=1, environment=iff(ComputerEnvironment=~\"Azure\", 1, 2), scopedToUpdatesSolution=true, lastUpdateAgentSeenTime=\"\"\r\n| join kind=leftouter\r\n(\r\n    Update\r\n    | where TimeGenerated>ago(5h) and OSType==\"Linux\" and SourceComputerId in (\r\n        (Heartbeat\r\n        | where TimeGenerated>ago(12h) and OSType==\"Linux\" and notempty(Computer)\r\n        | summarize arg_max(TimeGenerated, Solutions) by SourceComputerId\r\n        | where Solutions has \"updates\"\r\n        | distinct SourceComputerId))\r\n    | summarize hint.strategy=partitioned arg_max(TimeGenerated, UpdateState, Classification, Product, Computer, ComputerEnvironment) by SourceComputerId, Product, ProductArch\r\n    | summarize Computer=any(Computer), ComputerEnvironment=any(ComputerEnvironment), missingCriticalUpdatesCount=countif(Classification has \"Critical\" and UpdateState=~\"Needed\"), missingSecurityUpdatesCount=countif(Classification has \"Security\" and UpdateState=~\"Needed\"), missingOtherUpdatesCount=countif(Classification !has \"Critical\" and Classification !has \"Security\" and UpdateState=~\"Needed\"), lastAssessedTime=max(TimeGenerated), lastUpdateAgentSeenTime=\"\" by SourceComputerId\r\n    | extend compliance=iff(missingCriticalUpdatesCount > 0 or missingSecurityUpdatesCount > 0, 2, 1)\r\n    | extend ComplianceOrder=iff(missingCriticalUpdatesCount > 0 or missingSecurityUpdatesCount > 0 or missingOtherUpdatesCount > 0, 1, 3)\r\n)\r\non SourceComputerId\r\n| project id=SourceComputerId, displayName=Computer, sourceComputerId=SourceComputerId, scopedToUpdatesSolution=true, missingCriticalUpdatesCount=coalesce(missingCriticalUpdatesCount, -1), missingSecurityUpdatesCount=coalesce(missingSecurityUpdatesCount, -1), missingOtherUpdatesCount=coalesce(missingOtherUpdatesCount, -1), compliance=coalesce(compliance, 4), lastAssessedTime, lastUpdateAgentSeenTime, osType=1, environment=iff(ComputerEnvironment=~\"Azure\", 1, 2), ComplianceOrder=coalesce(ComplianceOrder, 2)\r\n| union(\r\n    Heartbeat\r\n    | where TimeGenerated>ago(12h) and OSType=~\"Windows\" and notempty(Computer)\r\n    | summarize arg_max(TimeGenerated, Solutions, Computer, ResourceId, ComputerEnvironment, VMUUID) by SourceComputerId\r\n    | where Solutions has \"updates\"\r\n    | extend vmuuId=VMUUID, azureResourceId=ResourceId, osType=2, environment=iff(ComputerEnvironment=~\"Azure\", 1, 2), scopedToUpdatesSolution=true, lastUpdateAgentSeenTime=\"\"\r\n    | join kind=leftouter\r\n    (\r\n        Update\r\n        | where TimeGenerated>ago(14h) and OSType!=\"Linux\" and SourceComputerId in (\r\n            (Heartbeat\r\n            | where TimeGenerated>ago(12h) and OSType=~\"Windows\" and notempty(Computer)\r\n            | summarize arg_max(TimeGenerated, Solutions) by SourceComputerId\r\n            | where Solutions has \"updates\"\r\n            | distinct SourceComputerId)\r\n            )\r\n        | summarize hint.strategy=partitioned arg_max(TimeGenerated, UpdateState, Classification, Title, Optional, Approved, Computer, ComputerEnvironment) by Computer, SourceComputerId, UpdateID\r\n        | summarize Computer=any(Computer), ComputerEnvironment=any(ComputerEnvironment), missingCriticalUpdatesCount=countif(Classification has \"Critical\" and UpdateState=~\"Needed\" and Approved!=false), missingSecurityUpdatesCount=countif(Classification has \"Security\" and UpdateState=~\"Needed\" and Approved!=false), missingOtherUpdatesCount=countif(Classification !has \"Critical\" and Classification !has \"Security\" and UpdateState=~\"Needed\" and Optional==false and Approved!=false), lastAssessedTime=max(TimeGenerated), lastUpdateAgentSeenTime=\"\" by SourceComputerId\r\n        | extend compliance=iff(missingCriticalUpdatesCount > 0 or missingSecurityUpdatesCount > 0, 2, 1)\r\n        | extend ComplianceOrder=iff(missingCriticalUpdatesCount > 0 or missingSecurityUpdatesCount > 0 or missingOtherUpdatesCount > 0, 1, 3)\r\n    )\r\n    on SourceComputerId\r\n| project id=SourceComputerId, displayName=Computer, sourceComputerId=SourceComputerId, scopedToUpdatesSolution=true, missingCriticalUpdatesCount=coalesce(missingCriticalUpdatesCount, -1), missingSecurityUpdatesCount=coalesce(missingSecurityUpdatesCount, -1), missingOtherUpdatesCount=coalesce(missingOtherUpdatesCount, -1), compliance=coalesce(compliance, 4), lastAssessedTime, lastUpdateAgentSeenTime, osType=2, environment=iff(ComputerEnvironment=~\"Azure\", 1, 2), ComplianceOrder=coalesce(ComplianceOrder, 2) )\r\n| order by ComplianceOrder asc, missingCriticalUpdatesCount desc, missingSecurityUpdatesCount desc, missingOtherUpdatesCount desc, displayName asc\r\n| project [\"Name\"]=displayName, CriticalUpdates=missingCriticalUpdatesCount, SecurityUpdates=missingSecurityUpdatesCount, [\"Other\"]=missingOtherUpdatesCount, compliance, osType, Environment=environment, lastAssessedTime, lastUpdateAgentSeenTime\r\n| extend osType = replace(@\"2\", @\"Windows\", tostring(osType))\r\n| extend osType = replace(@\"1\", @\"Linux\", tostring(osType))\r\n| extend Environment = replace(@\"2\", @\"Non-Azure\", tostring(Environment))\r\n| extend Environment = replace(@\"1\", @\"Azure\", tostring(Environment))\r\n| extend State  = case(\r\n                    compliance == 1, \"Up to date\",\r\n                    compliance == 2, \"Missing security or critical updates\",\r\n                    compliance == 4, \"Update client on error\",\r\n                    \"UNKNOWN\"\r\n                    )\r\n| summarize count() by State\r\n",
-              "size": 2,
-              "title": "Distribution of machines by status",
-              "timeContext": {
-                "durationMs": 86400000
-              },
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces",
-              "crossComponentResources": [
-                "{Workspaces}"
-              ],
-              "visualization": "piechart",
-              "chartSettings": {
-                "seriesLabelSettings": [
-                  {
-                    "seriesName": "Missing security or critical updates",
-                    "color": "red"
-                  },
-                  {
-                    "seriesName": "Update client on error",
-                    "color": "gray"
-                  },
-                  {
-                    "seriesName": "Up to date",
-                    "color": "green"
-                  }
-                ]
-              }
-            },
-            "customWidth": "33",
-            "name": "query - 4"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| where tostring(tags.patch) matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where tostring(tags.maintainer) == \"cms\"\r\n| extend env = tostring(split(tostring(tags.patch),\"-\")[0])\r\n| extend day = tostring(split(tostring(tags.patch),\"-\")[1])\r\n| extend hour = tostring(split(tostring(tags.patch),\"-\")[2])\r\n| extend patch = tostring(tags.patch)\r\n| project patch, env, day, hour",
-              "size": 1,
-              "title": "Tag distribution",
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "visualization": "table",
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "$gen_group",
-                    "formatter": 1,
-                    "formatOptions": {
-                      "compositeBarSettings": {
-                        "labelText": "",
-                        "columnSettings": []
-                      }
-                    }
-                  },
-                  {
-                    "columnMatch": "env",
-                    "formatter": 5
-                  },
-                  {
-                    "columnMatch": "day",
-                    "formatter": 5
-                  },
-                  {
-                    "columnMatch": "hour",
-                    "formatter": 5
-                  }
-                ],
-                "hierarchySettings": {
-                  "treeType": 1,
-                  "groupBy": [
-                    "day",
-                    "hour"
-                  ],
-                  "expandTopLevel": false
-                }
-              },
-              "sortBy": []
-            },
-            "name": "query - 1"
-          },
-          {
-            "type": 9,
-            "content": {
-              "version": "KqlParameterItem/1.0",
-              "parameters": [
-                {
-                  "id": "531c96a4-e4ac-48d2-bdef-36e28338dd2e",
-                  "version": "KqlParameterItem/1.0",
-                  "name": "name_azure",
-                  "label": "Name (Azure)",
-                  "type": 1,
-                  "value": "yod",
-                  "timeContext": {
-                    "durationMs": 86400000
-                  }
-                }
-              ],
-              "style": "pills",
-              "queryType": 0,
-              "resourceType": "microsoft.operationalinsights/workspaces"
-            },
-            "name": "parameters - 6"
-          },
-          {
-            "type": 3,
-            "content": {
-              "version": "KqlItem/1.0",
-              "query": "resources\r\n| where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n| where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n| extend patch = tostring(tags.patch)\r\n| extend maintainer = tostring(tags.maintainer)\r\n| where patch matches regex \"^[PQR]-((MON)|(TUE)|(WED)|(THU)|(FRI)|(SAT)|(SUN))-((03:00)|(12:00)|(22:00))$\"\r\n| where maintainer == \"cms\"\r\n| extend state = \"Valid tags\"\r\n| union (\r\n    resources\r\n    | where tenantId == \"eb7d34a8-83ad-4b0d-a564-dd544d939926\"\r\n    | where type == 'microsoft.compute/virtualmachines' or type == 'microsoft.hybridcompute/machines'\r\n    | extend patch = tostring(tags.patch)\r\n    | extend maintainer = tostring(tags.maintainer)\r\n    | where patch !has \"group\"\r\n    | where patch !startswith \"P-\" and patch !startswith \"Q-\" and patch !startswith \"R-\"\r\n    | where patch !endswith \"03:00\" and patch !endswith \"12:00\" and patch !endswith \"22:00\"\r\n    | where patch !has \"MON\" and patch !has \"TUE\" and patch !has \"WED\" and patch !has \"THU\" and patch !has \"FRI\" and patch !has \"SAT\" and patch !has \"SUN\"\r\n    | extend state = \"Invalid tags\"\r\n)\r\n| extend VMType = iff(type == 'microsoft.compute/virtualmachines', \"Azure\", \"Azure ARC\")\r\n| where name contains \"{name_azure}\"\r\n| project id, subscriptionId, VMType, location, resourceGroup, state, patch, maintainer\r\n",
-              "size": 0,
-              "queryType": 1,
-              "resourceType": "microsoft.resourcegraph/resources",
-              "crossComponentResources": [
-                "value::all"
-              ],
-              "gridSettings": {
-                "formatters": [
-                  {
-                    "columnMatch": "state",
-                    "formatter": 18,
-                    "formatOptions": {
-                      "thresholdsOptions": "icons",
-                      "thresholdsGrid": [
-                        {
-                          "operator": "contains",
-                          "thresholdValue": "Invalid tags",
-                          "representation": "4",
-                          "text": "{0}{1}"
-                        },
-                        {
-                          "operator": "contains",
-                          "thresholdValue": "Valid tags",
-                          "representation": "success",
-                          "text": "{0}{1}"
-                        },
-                        {
-                          "operator": "Default",
-                          "thresholdValue": null,
-                          "representation": "question",
-                          "text": "{0}{1}"
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "name": "query - 5"
-          }
-        ]
-      },
-      "conditionalVisibility": {
-        "parameterName": "tab",
-        "comparison": "isEqualTo",
-        "value": "ServiceHealth"
-      },
-      "name": "group - 7"
     }
   ],
   "fallbackResourceIds": [
